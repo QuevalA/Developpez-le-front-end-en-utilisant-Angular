@@ -1,1 +1,51 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+h1 {
+  font-weight: normal;
+  border-radius: 10px;
+  background-color: lightseagreen;
+  padding: 6px 12px;
+  color: white;
+  text-align: center;
+  max-width: 100%;
+  display: inline-block;
+}
+
+.center-h1 {
+  text-align: center;
+  display: block;
+}
+
+.subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.subtitle h3 {
+  border-radius: 10px;
+  padding: 5px;
+  border: 2px solid lightseagreen;
+  font-weight: normal;
+  color: dimgray;
+  margin: 10px;
+}
+
+.subtitle-number {
+  color: black;
+  font-weight: bold;
+}
+
+// !important required to override ngx-charts default style
+.pie-label {
+  font-size: 20px !important;
+}
