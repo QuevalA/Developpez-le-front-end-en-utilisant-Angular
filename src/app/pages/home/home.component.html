@@ -5,4 +5,10 @@
   <h3>Number of JOs<br><span class="subtitle-number">3</span></h3>
   <h3>Number of countries<br><span class="subtitle-number">{{ (olympics$ | async)?.length }}</span></h3>
 </div>
-<app-pie></app-pie>
+<div *ngIf="olympics$ | async as olympicData">
+  <app-chart-pie
+    (countrySelected)="onCountrySelected($event)"
+    [olympicData]="olympics$ | async"
+  ></app-chart-pie>
+
+</div>

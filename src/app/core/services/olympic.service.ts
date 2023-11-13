@@ -1,36 +1,27 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, map, Observable} from 'rxjs';
-import {catchError, tap} from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {catchError, map, tap} from 'rxjs/operators';
 import {Olympic} from "../models/Olympic";
+import {OlympicViewModel} from "../models/OlympicViewModel";
 
 @Injectable({
   providedIn: 'root',
 })
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
-  private olympics$ = new BehaviorSubject<any>(undefined);
+  private olympics$ = new BehaviorSubject<OlympicViewModel[]>([]);
 
   constructor(private http: HttpClient) {
   }
 
-  loadInitialData() {
+  loadInitialData(): Observable<Olympic[]> {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
-      tap((value) => {
-        // Calculate totalMedals for each Olympic and update the list
-        value = value.map((olympic) => {
-          olympic.totalMedals = olympic.participations.reduce((acc, participation) => acc + participation.medalsCount, 0);
-          return olympic;
-        });
-
-        this.olympics$.next(value);
-      }),
-      catchError((error, caught) => {
-        // TODO: improve error handling
+      tap((value) => this.processOlympicData(value)),
+      catchError((error) => {
         console.error(error);
-        // can be useful to end loading state and let the user know something went wrong
-        this.olympics$.next(null);
-        return caught;
+        this.olympics$.next([]);
+        return [];
       })
     );
   }
@@ -39,28 +30,23 @@ export class OlympicService {
     return this.olympics$.asObservable();
   }
 
-  getOlympicById(id: string): Observable<Olympic | undefined> {
-    // Convert the passed id (string) to a number
+  getOlympicById(id: string): Observable<OlympicViewModel | undefined> {
     const numericId = Number(id);
 
     return this.olympics$.asObservable().pipe(
-      map((olympics: Olympic[] | null) => {
-        if (olympics && !isNaN(numericId)) {
-          return olympics.find((o) => o.id === numericId);
-        }
-        return undefined;
-      })
+      map((olympics: OlympicViewModel[]) => olympics.find((o) => o.id === numericId))
     );
   }
 
-  getOlympicByCountryName(countryName: string): Observable<Olympic | undefined> {
+
+  getOlympicByCountryName(countryName: string): Observable<OlympicViewModel | undefined> {
     return this.olympics$.asObservable().pipe(
-      map((olympics: Olympic[] | null) => {
-        if (olympics) {
-          return olympics.find((o) => o.country === countryName);
-        }
-        return undefined;
-      })
+      map((olympics: OlympicViewModel[]) => olympics.find((o) => o.country === countryName))
     );
+  }
+
+  private processOlympicData(data: Olympic[]): void {
+    const viewModels = data.map((olympic) => new OlympicViewModel(olympic));
+    this.olympics$.next(viewModels);
   }
 }

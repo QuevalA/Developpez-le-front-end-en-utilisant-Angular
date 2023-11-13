@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {HomeComponent} from './pages/home/home.component';
+import {NotFoundComponent} from './pages/not-found/not-found.component';
 import {DetailComponent} from "./pages/detail/detail.component";
 
 const routes: Routes = [
@@ -9,7 +9,10 @@ const routes: Routes = [
     path: '',
     component: HomeComponent,
   },
-  { path: 'country/:id', component: DetailComponent },
+  {
+    path: 'country/:id',
+    component: DetailComponent
+  },
   {
     path: '**', // wildcard
     component: NotFoundComponent,
@@ -20,4 +23,5 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+}

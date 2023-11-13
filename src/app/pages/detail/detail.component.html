@@ -1,10 +1,13 @@
 <a routerLink="/">< Back</a>
-<div class="center-h1">
-  <h1>{{ olympic?.country }}</h1>
+<div *ngIf="olympic">
+  <div class="center-h1">
+    <h1>{{ olympic.country }}</h1>
+  </div>
+  <div class="subtitle">
+    <h3>Number of entries<br><span class="subtitle-number">{{ olympic.participations.length }}</span></h3>
+    <h3>Total number medals<br><span class="subtitle-number">{{ olympic.totalMedals }}</span></h3>
+    <h3>Total number of athletes<br><span class="subtitle-number">{{ olympic.totalAthletes }}</span></h3>
+  </div>
+  <app-chart-line [multi]="multi" [olympicId]=olympicId></app-chart-line>
+
 </div>
-<div class="subtitle">
-  <h3>Number of entries<br><span class="subtitle-number">{{ olympic?.participations?.length }}</span></h3>
-  <h3>Total number medals<br><span class="subtitle-number">{{ olympic?.totalMedals }}</span></h3>
-  <h3>Total number of athletes<br><span class="subtitle-number">{{ totalAthletes }}</span></h3>
-</div>
-<app-line></app-line>
