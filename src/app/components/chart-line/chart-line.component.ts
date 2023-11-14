@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {ChartLineModel} from "../../core/models/ChatLineModel";
 
 @Component({
   selector: 'app-chart-line',
@@ -7,7 +8,7 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class ChartLineComponent implements OnInit {
   @Input() olympicId: string | undefined;
-  @Input() multi: any[] = [];
+  @Input() multi: ChartLineModel[] = [];
 
   // Chart options
   legend: boolean = false;
@@ -21,7 +22,7 @@ export class ChartLineComponent implements OnInit {
   constructor() {
   }
 
-  xAxisTickFormatting(val: any): string {
+  xAxisTickFormatting(val: string): string {
     return parseInt(val, 10).toString();
   }
 

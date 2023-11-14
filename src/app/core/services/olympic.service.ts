@@ -9,15 +9,15 @@ import {OlympicViewModel} from "../models/OlympicViewModel";
   providedIn: 'root',
 })
 export class OlympicService {
-  private olympicUrl = './assets/mock/olympic.json';
-  private olympics$ = new BehaviorSubject<OlympicViewModel[]>([]);
+  private olympicUrl: string = './assets/mock/olympic.json';
+  private olympics$: BehaviorSubject<OlympicViewModel[]> = new BehaviorSubject<OlympicViewModel[]>([]);
 
   constructor(private http: HttpClient) {
   }
 
   loadInitialData(): Observable<Olympic[]> {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
-      tap((value) => this.processOlympicData(value)),
+      tap((value: Olympic[]) => this.processOlympicData(value)),
       catchError((error) => {
         console.error(error);
         this.olympics$.next([]);
@@ -26,27 +26,20 @@ export class OlympicService {
     );
   }
 
-  getOlympics() {
+  getOlympics(): Observable<OlympicViewModel[]> {
     return this.olympics$.asObservable();
   }
 
   getOlympicById(id: string): Observable<OlympicViewModel | undefined> {
-    const numericId = Number(id);
+    const numericId: number = Number(id);
 
     return this.olympics$.asObservable().pipe(
-      map((olympics: OlympicViewModel[]) => olympics.find((o) => o.id === numericId))
-    );
-  }
-
-
-  getOlympicByCountryName(countryName: string): Observable<OlympicViewModel | undefined> {
-    return this.olympics$.asObservable().pipe(
-      map((olympics: OlympicViewModel[]) => olympics.find((o) => o.country === countryName))
+      map((olympics: OlympicViewModel[]) => olympics.find((o: OlympicViewModel): boolean => o.id === numericId))
     );
   }
 
   private processOlympicData(data: Olympic[]): void {
-    const viewModels = data.map((olympic) => new OlympicViewModel(olympic));
+    const viewModels: OlympicViewModel[] = data.map((olympic: Olympic) => new OlympicViewModel(olympic));
     this.olympics$.next(viewModels);
   }
 }

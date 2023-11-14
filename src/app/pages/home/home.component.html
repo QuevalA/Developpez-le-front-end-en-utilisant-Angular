@@ -8,7 +8,7 @@
 <div *ngIf="olympics$ | async as olympicData">
   <app-chart-pie
     (countrySelected)="onCountrySelected($event)"
-    [olympicData]="olympics$ | async"
+    [olympicData]="olympicData"
   ></app-chart-pie>
-
 </div>
+

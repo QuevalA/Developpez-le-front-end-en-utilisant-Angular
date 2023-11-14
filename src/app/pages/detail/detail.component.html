@@ -8,6 +8,5 @@
     <h3>Total number medals<br><span class="subtitle-number">{{ olympic.totalMedals }}</span></h3>
     <h3>Total number of athletes<br><span class="subtitle-number">{{ olympic.totalAthletes }}</span></h3>
   </div>
-  <app-chart-line [multi]="multi" [olympicId]=olympicId></app-chart-line>
-
+  <app-chart-line [multi]="multi || []" [olympicId]=olympicId></app-chart-line>
 </div>

@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {OlympicViewModel} from "../../core/models/OlympicViewModel";
+import {ChartPieModel} from "../../core/models/ChatPieModel";
 
 @Component({
   selector: 'app-chart-pie',
@@ -8,10 +9,9 @@ import {OlympicViewModel} from "../../core/models/OlympicViewModel";
 })
 export class ChartPieComponent implements OnInit {
   @Input() olympicData: OlympicViewModel[] = [];
-  completeData: any[] | undefined;
 
   // Chart configuration
-  single: any[] | undefined;
+  single: ChartPieModel[] | undefined;
   view: [number, number];
 
   // Chart options
@@ -30,29 +30,19 @@ export class ChartPieComponent implements OnInit {
     this.prepareChartData();
   }
 
-  onSelect(data: any): void {
-    const selectedOlympic = this.olympicData.find((item) => item.country === data.name);
+  onSelect(data: ChartPieModel): void {
+    const selectedOlympic: OlympicViewModel | undefined = this.olympicData.find((item: OlympicViewModel): boolean => item.country === data.name);
     if (selectedOlympic) {
       this.countrySelected.emit(selectedOlympic.id);
     }
   }
-
+  
   private prepareChartData(): void {
-    const countryData = this.olympicData.map((country) => {
-      return {
-        id: country.id,
-        name: country.country,
-        totalMedals: country.totalMedals,
-      };
-    });
-
-    this.completeData = countryData;
-
     // Extract data for the chart according to its requirements
-    this.single = countryData.map((item) => {
+    this.single = this.olympicData.map((country: OlympicViewModel) => {
       return {
-        name: item.name,
-        value: item.totalMedals,
+        name: country.country,
+        value: country.totalMedals || 0,
       };
     });
   }

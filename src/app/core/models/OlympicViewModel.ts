@@ -1,5 +1,6 @@
 // ViewModel for presentations including calculated properties
 import {Olympic} from './Olympic';
+import {Participation} from "./Participation";
 
 export class OlympicViewModel extends Olympic {
   totalMedals: number | undefined;
@@ -15,10 +16,10 @@ export class OlympicViewModel extends Olympic {
   }
 
   private calculateTotalMedals(): number {
-    return this.participations.reduce((acc, participation) => acc + participation.medalsCount, 0);
+    return this.participations.reduce((acc: number, participation: Participation): number => acc + participation.medalsCount, 0);
   }
 
   private calculateTotalAthletes(): number {
-    return this.participations.reduce((acc, participation) => acc + participation.athleteCount, 0);
+    return this.participations.reduce((acc: number, participation: Participation) => acc + participation.athleteCount, 0);
   }
 }
