@@ -1,9 +1,9 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {catchError, map, tap} from 'rxjs/operators';
-import {Olympic} from "../models/Olympic";
-import {OlympicViewModel} from "../models/OlympicViewModel";
+import {BehaviorSubject, Observable, of, throwError} from 'rxjs';
+import {catchError, switchMap, tap} from 'rxjs/operators';
+import {Olympic} from '../models/Olympic';
+import {OlympicViewModel} from '../models/OlympicViewModel';
 
 @Injectable({
   providedIn: 'root',
@@ -11,18 +11,24 @@ import {OlympicViewModel} from "../models/OlympicViewModel";
 export class OlympicService {
   private olympicUrl: string = './assets/mock/olympic.json';
   private olympics$: BehaviorSubject<OlympicViewModel[]> = new BehaviorSubject<OlympicViewModel[]>([]);
+  private dataLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
   }
 
-  loadInitialData(): Observable<Olympic[]> {
+  loadInitialData(): Observable<void> {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
-      tap((value: Olympic[]) => this.processOlympicData(value)),
+      tap((value: Olympic[]): void => {
+        this.processOlympicData(value);
+        this.dataLoaded$.next(true);
+      }),
       catchError((error) => {
         console.error(error);
         this.olympics$.next([]);
-        return [];
-      })
+        this.dataLoaded$.next(true); // Mark as loaded even in case of an error
+        return throwError(() => new Error('Error loading initial data'));
+      }),
+      switchMap(() => of(void 0))
     );
   }
 
@@ -31,10 +37,24 @@ export class OlympicService {
   }
 
   getOlympicById(id: string): Observable<OlympicViewModel | undefined> {
-    const numericId: number = Number(id);
 
-    return this.olympics$.asObservable().pipe(
-      map((olympics: OlympicViewModel[]) => olympics.find((o: OlympicViewModel): boolean => o.id === numericId))
+    return this.dataLoaded$.pipe(
+      switchMap((isLoaded) => {
+        if (!isLoaded) {
+          return this.loadInitialData().pipe(
+            switchMap(() => this.getOlympicByIdFromData(id))
+          );
+        } else {
+          return this.getOlympicByIdFromData(id);
+        }
+      })
+    );
+  }
+
+  private getOlympicByIdFromData(id: string): Observable<OlympicViewModel | undefined> {
+    return this.olympics$.pipe(
+      switchMap((olympics: OlympicViewModel[]) => of(olympics.find((o: OlympicViewModel): boolean => o.id === Number(id)))),
+      catchError(() => of(undefined))
     );
   }
 

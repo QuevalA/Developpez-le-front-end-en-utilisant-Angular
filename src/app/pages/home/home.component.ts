@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {OlympicService} from 'src/app/core/services/olympic.service';
-import {Observable} from "rxjs";
+import {Observable, Subject, takeUntil} from "rxjs";
 import {Router} from "@angular/router";
 import {OlympicViewModel} from "../../core/models/OlympicViewModel";
 
@@ -11,17 +11,28 @@ import {OlympicViewModel} from "../../core/models/OlympicViewModel";
 })
 export class HomeComponent implements OnInit {
   public olympics$!: Observable<OlympicViewModel[]>;
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   constructor(private olympicService: OlympicService, private router: Router,) {
   }
 
   ngOnInit(): void {
-    this.olympicService.loadInitialData().subscribe((): void => {
-      this.olympics$ = this.olympicService.getOlympics();
-    });
+    this.olympicService
+      .loadInitialData()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((): void => {
+        this.olympics$ = this.olympicService.getOlympics();
+      });
   }
 
   onCountrySelected(countryId: number): void {
-    this.router.navigate(['/country', countryId]);
+    this.olympicService.getOlympics().pipe(takeUntil(this.ngUnsubscribe)).subscribe((): void => {
+      this.router.navigate(['/country', countryId]);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }

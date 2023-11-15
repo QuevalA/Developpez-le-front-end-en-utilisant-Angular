@@ -2,9 +2,19 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {OlympicService} from '../../core/services/olympic.service';
 import {OlympicViewModel} from '../../core/models/OlympicViewModel';
-import {Subject, takeUntil} from "rxjs";
+import {concatMap, Subject, take, takeUntil, throwError} from "rxjs";
+import {tap} from "rxjs/operators";
 import {Participation} from "../../core/models/Participation";
-import {ChartLineModel, ChartLineSeries} from "../../core/models/ChatLineModel";
+
+export interface ChartLineModel {
+  name: string;
+  series: ChartLineSeries[];
+}
+
+export interface ChartLineSeries {
+  name: string;
+  value: number;
+}
 
 @Component({
   selector: 'app-detail',
@@ -26,33 +36,47 @@ export class DetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((params: Params): void => {
-        const olympicId = params['id'];
+      .pipe(
+        concatMap((params: Params) => {
+          const olympicId = params['id'];
 
-        if (olympicId) {
-          this.olympicService.getOlympicById(olympicId)
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((olympicData: OlympicViewModel | undefined): void => {
+          if (olympicId) {
+            // Check if the initial data has been loaded before proceeding
+            return this.olympicService.getOlympicById(olympicId).pipe(
+              tap((olympicData: OlympicViewModel | undefined): void => {
+                if (!olympicData) {
+                  this.router.navigate(['/not-found']);
+                }
+              }),
+              take(1) // Add take(1) to complete the observable after the first emission
+            );
+          } else {
+            return throwError('Olympic ID not present' as never);
+          }
+        }),
+        takeUntil(this.ngUnsubscribe)
+      )
+      .subscribe({
+        next: (olympicData: OlympicViewModel | undefined): void => {
 
-              if (olympicData) {
-                this.olympic = new OlympicViewModel(olympicData);
+          if (olympicData) {
+            this.olympic = new OlympicViewModel(olympicData);
 
-                this.multi = [
-                  {
-                    name: olympicData.country,
-                    series: olympicData.participations.map((participation: Participation) => {
-                      return {
-                        name: participation.year.toString(),
-                        value: participation.medalsCount,
-                      };
-                    }) as ChartLineSeries[],
-                  },
-                ];
-              } else {
-                this.router.navigate(['/not-found']);
-              }
-            });
+            this.multi = [
+              {
+                name: olympicData.country,
+                series: olympicData.participations.map((participation: Participation) => {
+                  return {
+                    name: participation.year.toString(),
+                    value: participation.medalsCount,
+                  };
+                }),
+              },
+            ];
+          }
+        },
+        error: (error): void => {
+          console.error('Error fetching data:', error);
         }
       });
   }

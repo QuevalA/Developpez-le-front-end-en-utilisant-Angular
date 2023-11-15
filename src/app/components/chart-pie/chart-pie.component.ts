@@ -1,6 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {OlympicViewModel} from "../../core/models/OlympicViewModel";
-import {ChartPieModel} from "../../core/models/ChatPieModel";
+
+export interface ChartPieModel {
+  name: string;
+  value: number;
+}
 
 @Component({
   selector: 'app-chart-pie',
@@ -9,6 +13,7 @@ import {ChartPieModel} from "../../core/models/ChatPieModel";
 })
 export class ChartPieComponent implements OnInit {
   @Input() olympicData: OlympicViewModel[] = [];
+  @Output() countrySelected: EventEmitter<number> = new EventEmitter<number>();
 
   // Chart configuration
   single: ChartPieModel[] | undefined;
@@ -20,8 +25,6 @@ export class ChartPieComponent implements OnInit {
   showLabels: boolean = true;
   isDoughnut: boolean = false;
 
-  @Output() countrySelected: EventEmitter<number> = new EventEmitter<number>();
-
   constructor() {
     this.view = [1000, 600];
   }
@@ -31,12 +34,22 @@ export class ChartPieComponent implements OnInit {
   }
 
   onSelect(data: ChartPieModel): void {
-    const selectedOlympic: OlympicViewModel | undefined = this.olympicData.find((item: OlympicViewModel): boolean => item.country === data.name);
+    const selectedOlympic: OlympicViewModel | undefined = this.olympicData.find(
+      (item: OlympicViewModel): boolean => item.country === data.name);
     if (selectedOlympic) {
       this.countrySelected.emit(selectedOlympic.id);
     }
   }
-  
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    this.resizeChart((event.target as Window).innerWidth);
+  }
+
+  public resizeChart(width: any): void {
+    this.view = [width, 320];
+  }
+
   private prepareChartData(): void {
     // Extract data for the chart according to its requirements
     this.single = this.olympicData.map((country: OlympicViewModel) => {
