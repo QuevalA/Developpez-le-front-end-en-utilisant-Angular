@@ -7,4 +7,9 @@
   [results]="single"
   [view]="view"
 >
+  <ng-template #tooltipTemplate let-model="model">
+    <div class="custom-tooltip">
+      <p>{{ model.name }}<br>🏅{{ model.value }}</p>
+    </div>
+  </ng-template>
 </ngx-charts-pie-chart>

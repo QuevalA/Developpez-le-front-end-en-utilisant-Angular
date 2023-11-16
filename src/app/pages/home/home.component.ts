@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit {
       });
   }
 
+  //Navigate to Detail page about clicked country from pie chart
   onCountrySelected(countryId: number): void {
     this.olympicService.getOlympics().pipe(takeUntil(this.ngUnsubscribe)).subscribe((): void => {
       this.router.navigate(['/country', countryId]);

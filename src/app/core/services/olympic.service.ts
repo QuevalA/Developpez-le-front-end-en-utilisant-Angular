@@ -36,10 +36,11 @@ export class OlympicService {
     return this.olympics$.asObservable();
   }
 
+  // Those 2 "getOlympicById" methods allow the Detail page to load properly when accessed via direct URL
   getOlympicById(id: string): Observable<OlympicViewModel | undefined> {
 
     return this.dataLoaded$.pipe(
-      switchMap((isLoaded) => {
+      switchMap((isLoaded: boolean): Observable<OlympicViewModel | undefined> => {
         if (!isLoaded) {
           return this.loadInitialData().pipe(
             switchMap(() => this.getOlympicByIdFromData(id))

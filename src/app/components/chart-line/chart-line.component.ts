@@ -26,6 +26,7 @@ export class ChartLineComponent {
     this.view = [1000, 600];
   }
 
+  // Make the chart responsive
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     this.resizeChart((event.target as Window).innerWidth);
@@ -35,6 +36,7 @@ export class ChartLineComponent {
     this.view = [width, 320];
   }
 
+  // Format years on chart
   xAxisTickFormatting(val: string): string {
     return parseInt(val, 10).toString();
   }

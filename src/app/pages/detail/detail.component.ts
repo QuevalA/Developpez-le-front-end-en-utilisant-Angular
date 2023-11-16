@@ -40,15 +40,15 @@ export class DetailComponent implements OnInit {
         concatMap((params: Params) => {
           const olympicId = params['id'];
 
+          // Check if the initial data has been loaded before proceeding
           if (olympicId) {
-            // Check if the initial data has been loaded before proceeding
             return this.olympicService.getOlympicById(olympicId).pipe(
               tap((olympicData: OlympicViewModel | undefined): void => {
                 if (!olympicData) {
                   this.router.navigate(['/not-found']);
                 }
               }),
-              take(1) // Add take(1) to complete the observable after the first emission
+              take(1) // Complete the observable after the first emission
             );
           } else {
             return throwError('Olympic ID not present' as never);

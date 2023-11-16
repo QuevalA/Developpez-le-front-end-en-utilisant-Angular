@@ -10,7 +10,7 @@ body {
 h1 {
   font-weight: normal;
   border-radius: 10px;
-  background-color: lightseagreen;
+  background-color: #04838f;
   padding: 6px 12px;
   color: white;
   text-align: center;
@@ -34,7 +34,7 @@ h1 {
 .subtitle h3 {
   border-radius: 10px;
   padding: 5px;
-  border: 2px solid lightseagreen;
+  border: 2px solid #04838f;
   font-weight: normal;
   color: dimgray;
   margin: 10px;
@@ -48,4 +48,12 @@ h1 {
 // !important required to override ngx-components default style
 .pie-label {
   font-size: 20px !important;
+}
+
+.ngx-charts-tooltip-content.type-tooltip {
+  background-color: #04838f !important;
+}
+
+.ngx-charts-tooltip-content.type-tooltip .tooltip-caret.position-top {
+  border-top: 7px solid #04838f !important;
 }

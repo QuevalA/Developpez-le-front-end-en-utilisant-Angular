@@ -41,6 +41,7 @@ export class ChartPieComponent implements OnInit {
     }
   }
 
+  // Make the chart responsive
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     this.resizeChart((event.target as Window).innerWidth);
@@ -50,8 +51,8 @@ export class ChartPieComponent implements OnInit {
     this.view = [width, 320];
   }
 
+  // Extract data for the chart according to its requirements
   private prepareChartData(): void {
-    // Extract data for the chart according to its requirements
     this.single = this.olympicData.map((country: OlympicViewModel) => {
       return {
         name: country.country,
