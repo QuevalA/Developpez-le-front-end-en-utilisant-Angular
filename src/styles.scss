@@ -5,6 +5,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 15px;
+  max-width: 100%;
 }
 
 h1 {
@@ -45,7 +46,26 @@ h1 {
   font-weight: bold;
 }
 
-// !important required to override ngx-components default style
+//Default library behavior : chart will adapt to its container size
+.custom-chart-container {
+  @media (min-width: 350px) {
+    max-width: 325px;
+  }
+
+  @media (min-width: 400px) {
+    max-width: 350px;
+  }
+
+  @media (min-width: 768px) {
+    max-width: 750px;
+  }
+
+  @media (min-width: 1024px) {
+    max-width: 1000px;
+  }
+}
+
+//!important required to override ngx-components default style
 .pie-label {
   font-size: 20px !important;
 }

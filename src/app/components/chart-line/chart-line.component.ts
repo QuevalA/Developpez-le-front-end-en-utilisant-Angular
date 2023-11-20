@@ -1,4 +1,4 @@
-import {Component, HostListener, Input} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ChartLineModel} from "../../pages/detail/detail.component";
 
 @Component({
@@ -10,9 +10,6 @@ export class ChartLineComponent {
   @Input() olympicId: string | undefined;
   @Input() multi: ChartLineModel[] = [];
 
-  // Chart configuration
-  view: [number, number];
-
   // Chart options
   legend: boolean = false;
   xAxis: boolean = true;
@@ -23,17 +20,6 @@ export class ChartLineComponent {
   timeline: boolean = false;
 
   constructor() {
-    this.view = [1000, 600];
-  }
-
-  // Make the chart responsive
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event): void {
-    this.resizeChart((event.target as Window).innerWidth);
-  }
-
-  public resizeChart(width: any): void {
-    this.view = [width, 320];
   }
 
   // Format years on chart

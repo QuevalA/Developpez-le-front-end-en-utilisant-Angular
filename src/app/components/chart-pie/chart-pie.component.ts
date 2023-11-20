@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {OlympicViewModel} from "../../core/models/OlympicViewModel";
 
 export interface ChartPieModel {
@@ -17,7 +17,6 @@ export class ChartPieComponent implements OnInit {
 
   // Chart configuration
   single: ChartPieModel[] | undefined;
-  view: [number, number];
 
   // Chart options
   gradient: boolean = false;
@@ -26,7 +25,6 @@ export class ChartPieComponent implements OnInit {
   isDoughnut: boolean = false;
 
   constructor() {
-    this.view = [1000, 600];
   }
 
   ngOnInit(): void {
@@ -39,16 +37,6 @@ export class ChartPieComponent implements OnInit {
     if (selectedOlympic) {
       this.countrySelected.emit(selectedOlympic.id);
     }
-  }
-
-  // Make the chart responsive
-  @HostListener('window:resize', ['$event'])
-  onResize(event: Event): void {
-    this.resizeChart((event.target as Window).innerWidth);
-  }
-
-  public resizeChart(width: any): void {
-    this.view = [width, 320];
   }
 
   // Extract data for the chart according to its requirements
